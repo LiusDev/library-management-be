@@ -16,7 +16,10 @@ const config = {
 	cookie: {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "lax",
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		domain:
+			process.env.NODE_ENV === "production" ? ".quydx.id.vn" : undefined,
+		path: "/",
 		maxAge: 24 * 60 * 60 * 1000, // 24 hours
 	},
 }

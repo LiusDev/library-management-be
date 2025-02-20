@@ -27,10 +27,9 @@ router.get(
 
 		// Set token in HTTP-only cookie
 		res.cookie("access_token", token, {
-			httpOnly: config.cookie.httpOnly,
-			secure: config.cookie.secure,
-			sameSite: config.cookie.sameSite,
-			maxAge: config.cookie.maxAge,
+			...config.cookie,
+			secure: true,
+			sameSite: "none",
 		})
 
 		// Redirect to frontend
@@ -39,7 +38,10 @@ router.get(
 )
 
 router.get("/logout", (req, res) => {
-	res.clearCookie("access_token")
+	res.cookie("access_token", "", {
+		...config.cookie,
+		maxAge: 0,
+	})
 	res.json({ message: "Logged out successfully" })
 })
 

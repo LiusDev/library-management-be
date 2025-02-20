@@ -17,8 +17,18 @@ app.use(
 	cors({
 		origin: process.env.FRONTEND_URL,
 		credentials: true,
+		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization"],
 	})
 )
+
+// Add security headers
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Credentials", "true")
+	res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL)
+	next()
+})
+
 app.use(morgan("dev"))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
