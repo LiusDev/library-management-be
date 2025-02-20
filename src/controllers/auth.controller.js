@@ -18,10 +18,20 @@ exports.googleCallback = async (req, res) => {
 				firstName: req.user.givenName,
 				lastName: req.user.familyName,
 				avatar: req.user.avatar,
+				role:
+					req.user.email === process.env.ADMIN_EMAIL
+						? "admin"
+						: "user",
 			})
 
 			user = await newUser.save()
+		} else {
+			user.firstName = req.user.givenName || user.firstName
+			user.lastName = req.user.familyName || user.lastName
+			user.avatar = req.user.avatar || user.avatar
+			user.save()
 		}
+
 		const token = generateToken(user)
 		// Set token in HTTP-only cookie
 		res.cookie("access_token", token, {

@@ -1,11 +1,9 @@
 const mongoose = require("mongoose")
+const config = require("./config")
 
 const connectDB = async () => {
 	try {
-		const conn = await mongoose.connect(
-			process.env.MONGODB_URL ||
-				"mongodb://localhost:27017/library-management"
-		)
+		const conn = await mongoose.connect(config.db.url)
 		console.log(`MongoDB Connected: ${conn.connection.host}`)
 	} catch (error) {
 		console.error(`Error: ${error.message}`)
