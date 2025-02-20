@@ -14,14 +14,14 @@ const userSchema = new mongoose.Schema(
 			unique: true,
 			trim: true,
 		},
-		password: {
-			type: String,
-			required: true,
-		},
 		role: {
 			type: String,
-			enum: ["admin", "user"],
+			enum: ["admin", "staff", "user"],
 			default: "user",
+		},
+		avatar: {
+			type: String,
+			default: "",
 		},
 	},
 	{
