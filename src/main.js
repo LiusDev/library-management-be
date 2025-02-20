@@ -4,16 +4,28 @@ const cors = require("cors")
 const morgan = require("morgan")
 const connectDB = require("./config/database")
 const userRoutes = require("./routes/user.routes")
+const passport = require("./config/passport")
+const authRoutes = require("./routes/auth.routes")
+const cookieParser = require("cookie-parser")
 
 const app = express()
 const port = process.env.PORT || 9999
 const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost"
 
 // Middleware
-app.use(cors())
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL,
+		credentials: true,
+	})
+)
 app.use(morgan("dev"))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
+
+// Initialize passport before routes
+app.use(passport.initialize())
 
 // Basic route
 app.get("/", (req, res) => {
@@ -21,7 +33,8 @@ app.get("/", (req, res) => {
 })
 
 // Routes
-app.use("/v1/users", userRoutes)
+app.use("/auth", authRoutes)
+app.use("/users", userRoutes)
 
 // 404 handler - Add this before error handling middleware
 app.use((req, res) => {
