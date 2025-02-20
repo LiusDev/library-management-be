@@ -1,7 +1,7 @@
 const express = require("express")
 const passport = require("passport")
 const config = require("../config/config")
-const { generateToken } = require("../utils/token.utils")
+const authController = require("../controllers/auth.controller")
 const router = express.Router()
 
 router.get(
@@ -18,31 +18,9 @@ router.get(
 		failureRedirect: `${config.frontend.url}/login?error=true`,
 		session: false,
 	}),
-	(req, res) => {
-		if (!req.user) {
-			return res.status(401).json({ message: "Authentication failed" })
-		}
-
-		const token = generateToken(req.user)
-
-		// Set token in HTTP-only cookie
-		res.cookie("access_token", token, {
-			...config.cookie,
-			secure: true,
-			sameSite: "none",
-		})
-
-		// Redirect to frontend
-		res.redirect(`${config.frontend.url}`)
-	}
+	authController.googleCallback
 )
 
-router.get("/logout", (req, res) => {
-	res.cookie("access_token", "", {
-		...config.cookie,
-		maxAge: 0,
-	})
-	res.json({ message: "Logged out successfully" })
-})
+router.get("/logout", authController.logout)
 
 module.exports = router
