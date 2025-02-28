@@ -3,9 +3,10 @@ const express = require("express")
 const cors = require("cors")
 const morgan = require("morgan")
 const connectDB = require("./config/database")
-const userRoutes = require("./routes/user.routes")
 const passport = require("./config/passport")
 const authRoutes = require("./routes/auth.routes")
+const userRoutes = require("./routes/user.routes")
+const bookRoutes = require("./routes/book.routes")
 const cookieParser = require("cookie-parser")
 
 const app = express()
@@ -45,6 +46,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
+app.use("/books", bookRoutes)
 
 // 404 handler - Add this before error handling middleware
 app.use((req, res) => {
