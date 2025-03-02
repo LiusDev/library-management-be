@@ -14,6 +14,11 @@ const generateToken = (user) => {
 	)
 }
 
+const verifyToken = (token) => {
+	return jwt.verify(token, config.jwt.secret)
+}
+
 module.exports = {
 	generateToken,
+	verifyToken,
 }

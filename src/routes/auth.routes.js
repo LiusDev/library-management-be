@@ -21,6 +21,8 @@ router.get(
 	authController.googleCallback
 )
 
+router.get("/profile", authController.getProfile)
+
 router.get("/logout", authController.logout)
 
 module.exports = router

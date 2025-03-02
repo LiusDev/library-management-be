@@ -1,5 +1,5 @@
 const config = require("../config/config")
-const { generateToken } = require("../utils/token.utils")
+const { generateToken, verifyToken } = require("../utils/token.utils")
 /**
  * @type {import("../models/user.model")}
  * */
@@ -44,6 +44,31 @@ exports.googleCallback = async (req, res) => {
 		res.redirect(`${config.frontend.url}`)
 	} catch (error) {
 		console.error("Error in Google Callback:", error)
+		res.status(500).json({ message: "Internal server error" })
+	}
+}
+
+exports.getProfile = async (req, res) => {
+	try {
+		// Get access_token from cookie
+		const token = req.cookies.access_token
+		if (!token) {
+			return res.status(401).json({ message: "Unauthorized" })
+		}
+		// Verify token
+		const tokenUserInfo = verifyToken(token)
+		if (!tokenUserInfo) {
+			return res.status(401).json({ message: "Unauthorized" })
+		}
+		const user = await User.findOne({ email: tokenUserInfo.email }).select(
+			"-password"
+		)
+		if (!user) {
+			return res.status(404).json({ message: "User not found" })
+		}
+		res.json(user)
+	} catch (error) {
+		console.error("Error in getProfile:", error)
 		res.status(500).json({ message: "Internal server error" })
 	}
 }
