@@ -4,9 +4,9 @@ const cors = require("cors")
 const morgan = require("morgan")
 const connectDB = require("./config/database")
 const passport = require("./config/passport")
-const authRoutes = require("./routes/auth.routes")
-const userRoutes = require("./routes/user.routes")
-const bookRoutes = require("./routes/book.routes")
+const authRoutes = require("./api/common/routes/auth.routes")
+const userRoutes = require("./api/admin/routes/user.routes")
+const bookRoutes = require("./api/v1/routes/book.routes")
 const cookieParser = require("cookie-parser")
 
 const app = express()
@@ -43,10 +43,20 @@ app.get("/", (req, res) => {
 	res.json({ message: "Welcome to Library Management System API" })
 })
 
-// Routes
+const v1Router = express.Router()
+const adminRouter = express.Router()
+
+// common routes
 app.use("/auth", authRoutes)
-app.use("/users", userRoutes)
-app.use("/books", bookRoutes)
+
+// v1 routes
+v1Router.use("/books", bookRoutes)
+
+// admin routes
+adminRouter.use("/users", userRoutes)
+
+app.use("/v1", v1Router)
+app.use("/admin", adminRouter)
 
 // 404 handler - Add this before error handling middleware
 app.use((req, res) => {

@@ -1,9 +1,9 @@
-const config = require("../config/config")
-const { generateToken, verifyToken } = require("../utils/token.utils")
+const config = require("../../../config/config")
+const { generateToken, verifyToken } = require("../../../utils/token.utils")
 /**
- * @type {import("../models/user.model")}
+ * @type {import("../../../models/user.model")}
  * */
-const User = require("../models/user.model")
+const User = require("../../../models/user.model")
 
 exports.googleCallback = async (req, res) => {
 	if (!req.user) {

@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
-const userController = require("../controllers/user.controller")
-const validate = require("../middleware/validate")
+const userController = require("../controller/user.controller")
+const validate = require("../../../middleware/validate")
 const {
 	createUserSchema,
 	updateUserSchema,

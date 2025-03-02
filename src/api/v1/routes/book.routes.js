@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
-const bookController = require("../controllers/book.controller")
-const validate = require("../middleware/validate")
+const bookController = require("../controller/book.controller")
+const validate = require("../../../middleware/validate")
 
 router.get("/", bookController.getBooks)
 router.get("/:id", bookController.getBookById)

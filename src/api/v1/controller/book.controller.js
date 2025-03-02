@@ -1,7 +1,7 @@
 /**
- * @type {import("../models/book.model")}
+ * @type {import("../../../models/book.model")}
  */
-const Book = require("../models/book.model")
+const Book = require("../../../models/book.model")
 
 exports.getBooks = async (req, res) => {
 	try {
