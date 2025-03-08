@@ -16,7 +16,7 @@ const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost"
 // Middleware
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL,
+		origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization"],
