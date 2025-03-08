@@ -17,6 +17,7 @@ const config = {
 	},
 	frontend: {
 		url: process.env.FRONTEND_URL || "http://localhost:5173",
+		adminUrl: process.env.ADMIN_URL || "http://localhost:5173",
 	},
 	cookie: {
 		httpOnly: true,

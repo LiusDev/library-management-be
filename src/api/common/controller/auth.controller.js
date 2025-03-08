@@ -41,7 +41,11 @@ exports.googleCallback = async (req, res) => {
 		})
 
 		// Redirect to frontend
-		res.redirect(`${config.frontend.url}`)
+		if (["admin", "staff"].includes(user.role)) {
+			res.redirect(`${config.frontend.adminUrl}`)
+		} else {
+			res.redirect(`${config.frontend.url}`)
+		}
 	} catch (error) {
 		console.error("Error in Google Callback:", error)
 		res.status(500).json({ message: "Internal server error" })
