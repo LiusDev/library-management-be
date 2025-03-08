@@ -13,20 +13,60 @@ const app = express()
 const port = process.env.PORT || 9999
 const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost"
 
-// Middleware
-app.use(
-	cors({
-		origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
-		credentials: true,
-		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-		allowedHeaders: ["Content-Type", "Authorization"],
-	})
-)
+// CORS origin configuration
+const corsOptions = {
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+	allowedHeaders: ["Content-Type", "Authorization"],
+	origin: function (origin, callback) {
+		// Allow requests with no origin (like mobile apps or curl requests)
+		if (!origin) return callback(null, true)
+
+		if (process.env.NODE_ENV === "production") {
+			// In production, only allow *.quydx.id.vn domains
+			const allowedDomains = /^https:\/\/(.+\.)?quydx\.id\.vn$/
+			if (allowedDomains.test(origin)) {
+				return callback(null, true)
+			}
+		} else {
+			// In development, allow all localhost origins
+			if (
+				origin.startsWith("http://localhost:") ||
+				origin.startsWith("https://localhost:")
+			) {
+				return callback(null, true)
+			}
+		}
+
+		callback(new Error("Not allowed by CORS"))
+	},
+}
+
+// Apply CORS middleware
+app.use(cors(corsOptions))
 
 // Add security headers
 app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Credentials", "true")
-	res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL)
+
+	// Set Access-Control-Allow-Origin dynamically
+	const origin = req.headers.origin
+	if (origin) {
+		if (process.env.NODE_ENV === "production") {
+			// In production, check if origin is from quydx.id.vn
+			if (/^https:\/\/(.+\.)?quydx\.id\.vn$/.test(origin)) {
+				res.header("Access-Control-Allow-Origin", origin)
+			}
+		} else {
+			// In development, allow localhost origins
+			if (
+				origin.startsWith("http://localhost:") ||
+				origin.startsWith("https://localhost:")
+			) {
+				res.header("Access-Control-Allow-Origin", origin)
+			}
+		}
+	}
 	next()
 })
 
