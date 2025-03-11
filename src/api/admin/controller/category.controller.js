@@ -2,6 +2,7 @@
  * @type {import("../../../models/category.model")}
  */
 const Category = require("../../../models/category.model")
+const Book = require("../../../models/book.model")
 
 exports.createCategory = async (req, res) => {
 	try {
@@ -20,14 +21,30 @@ exports.getCategories = async (req, res) => {
 		const validPage = parseInt(page, 10) || 1
 		const validLimit = parseInt(limit, 10) || 10
 
+		const bookCountsByCategory = await Book.aggregate([
+			{ $unwind: "$category" },
+			{ $group: { _id: "$category", count: { $sum: 1 } } },
+		])
+
+		const bookCountMap = {}
+		bookCountsByCategory.forEach((item) => {
+			bookCountMap[item._id.toString()] = item.count
+		})
+
 		const categories = await Category.find({})
 			.skip((validPage - 1) * validLimit)
 			.limit(validLimit)
 
 		const totalCategories = await Category.countDocuments({})
 
+		const categoriesWithCount = categories.map((category) => {
+			const categoryObj = category.toObject()
+			categoryObj.bookCount = bookCountMap[category._id.toString()] || 0
+			return categoryObj
+		})
+
 		res.json({
-			data: categories,
+			data: categoriesWithCount,
 			total: totalCategories,
 			page: validPage,
 			limit: validLimit,
@@ -54,7 +71,8 @@ exports.updateCategory = async (req, res) => {
 	try {
 		const category = await Category.findByIdAndUpdate(
 			req.params.id,
-			req.body
+			req.body,
+			{ new: true }
 		)
 		if (!category) {
 			return res.status(404).json({ message: "Category not found" })
