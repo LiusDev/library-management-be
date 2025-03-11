@@ -21,6 +21,10 @@ const bookSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		cover: {
+			type: String,
+			default: "default.jpg",
+		},
 		category: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

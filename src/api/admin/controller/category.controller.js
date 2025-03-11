@@ -2,6 +2,10 @@
  * @type {import("../../../models/category.model")}
  */
 const Category = require("../../../models/category.model")
+
+/**
+ * @type {import("../../../models/book.model")}
+ */
 const Book = require("../../../models/book.model")
 
 exports.createCategory = async (req, res) => {
@@ -10,6 +14,7 @@ exports.createCategory = async (req, res) => {
 		const newCategory = await category.save()
 		res.status(201).json(newCategory)
 	} catch (error) {
+		console.error(error)
 		res.status(500).json({ message: error.message })
 	}
 }
@@ -79,6 +84,7 @@ exports.updateCategory = async (req, res) => {
 		}
 		res.json(category)
 	} catch (error) {
+		console.error(error)
 		res.status(500).json({ message: error.message })
 	}
 }
@@ -91,6 +97,7 @@ exports.deleteCategory = async (req, res) => {
 		}
 		res.json(category)
 	} catch (error) {
+		console.error(error)
 		res.status(500).json({ message: error.message })
 	}
 }

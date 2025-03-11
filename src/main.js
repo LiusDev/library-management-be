@@ -5,9 +5,10 @@ const morgan = require("morgan")
 const connectDB = require("./config/database")
 const passport = require("./config/passport")
 const authRoutes = require("./api/common/routes/auth.routes")
-const userRoutes = require("./api/admin/routes/user.routes")
-const bookRoutes = require("./api/v1/routes/book.routes")
+const adminUserRoutes = require("./api/admin/routes/user.routes")
 const adminCategoryRoutes = require("./api/admin/routes/category.routes")
+const adminBookRoutes = require("./api/admin/routes/book.routes")
+const bookRoutes = require("./api/v1/routes/book.routes")
 const cookieParser = require("cookie-parser")
 const { extractUser } = require("./middleware/auth.middleware")
 
@@ -96,8 +97,9 @@ app.use("/auth", authRoutes)
 v1Router.use("/books", bookRoutes)
 
 // admin routes
-adminRouter.use("/users", userRoutes)
+adminRouter.use("/users", adminUserRoutes)
 adminRouter.use("/category", adminCategoryRoutes)
+adminRouter.use("/books", adminBookRoutes)
 
 app.use("/v1", v1Router)
 app.use("/admin", adminRouter)
