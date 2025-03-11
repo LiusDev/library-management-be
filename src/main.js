@@ -7,7 +7,9 @@ const passport = require("./config/passport")
 const authRoutes = require("./api/common/routes/auth.routes")
 const userRoutes = require("./api/admin/routes/user.routes")
 const bookRoutes = require("./api/v1/routes/book.routes")
+const adminCategoryRoutes = require("./api/admin/routes/category.routes")
 const cookieParser = require("cookie-parser")
+const { extractUser } = require("./middleware/auth.middleware")
 
 const app = express()
 const port = process.env.PORT || 9999
@@ -74,6 +76,7 @@ app.use(morgan("dev"))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(extractUser)
 
 // Initialize passport before routes
 app.use(passport.initialize())
@@ -94,6 +97,7 @@ v1Router.use("/books", bookRoutes)
 
 // admin routes
 adminRouter.use("/users", userRoutes)
+adminRouter.use("/category", adminCategoryRoutes)
 
 app.use("/v1", v1Router)
 app.use("/admin", adminRouter)

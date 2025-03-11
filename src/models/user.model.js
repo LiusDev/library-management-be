@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const { UserRole } = require("../utils/constant")
 
 const userSchema = new mongoose.Schema(
 	{
@@ -16,7 +17,7 @@ const userSchema = new mongoose.Schema(
 		},
 		role: {
 			type: String,
-			enum: ["admin", "staff", "user"],
+			enum: Object.entries(UserRole).map(([, value]) => value),
 			default: "user",
 		},
 		avatar: {
@@ -26,6 +27,7 @@ const userSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
+		versionKey: false,
 	}
 )
 

@@ -33,6 +33,7 @@ exports.googleCallback = async (req, res) => {
 		}
 
 		const token = generateToken(user)
+		console.log(`Token of ${user.email}: ${token}`)
 		// Set token in HTTP-only cookie
 		res.cookie("access_token", token, {
 			...config.cookie,
@@ -54,23 +55,11 @@ exports.googleCallback = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
 	try {
-		// Get access_token from cookie
-		const token = req.cookies.access_token
-		if (!token) {
+		if (!req.user) {
 			return res.status(401).json({ message: "Unauthorized" })
 		}
-		// Verify token
-		const tokenUserInfo = verifyToken(token)
-		if (!tokenUserInfo) {
-			return res.status(401).json({ message: "Unauthorized" })
-		}
-		const user = await User.findOne({ email: tokenUserInfo.email }).select(
-			"-password"
-		)
-		if (!user) {
-			return res.status(404).json({ message: "User not found" })
-		}
-		res.json(user)
+
+		res.json(req.user)
 	} catch (error) {
 		console.error("Error in getProfile:", error)
 		res.status(500).json({ message: "Internal server error" })
