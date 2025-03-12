@@ -30,8 +30,8 @@ exports.getBooks = async (req, res) => {
 		const {
 			keyword,
 			categories,
-			orderBy = "createdAt",
-			sort = "desc",
+			order = "desc",
+			sort = "createdAt",
 			page = 1,
 			limit = 10,
 		} = req.query
@@ -57,10 +57,9 @@ exports.getBooks = async (req, res) => {
 			query.category = { $in: categoryIds }
 		}
 
-		// Set up sorting
-		const sortOrder = sort.toLowerCase() === "asc" ? 1 : -1
+		// Set up sorting and order
 		const sortOption = {}
-		sortOption[orderBy] = sortOrder
+		sortOption[sort] = order === "desc" ? -1 : 1
 
 		// Calculate pagination
 		const pageNum = parseInt(page)
