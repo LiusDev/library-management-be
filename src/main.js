@@ -4,13 +4,19 @@ const cors = require("cors")
 const morgan = require("morgan")
 const connectDB = require("./config/database")
 const passport = require("./config/passport")
+const cookieParser = require("cookie-parser")
+const { extractUser } = require("./middleware/auth.middleware")
+
+// common routes
 const authRoutes = require("./api/common/routes/auth.routes")
+// admin routes
 const adminUserRoutes = require("./api/admin/routes/user.routes")
 const adminCategoryRoutes = require("./api/admin/routes/category.routes")
 const adminBookRoutes = require("./api/admin/routes/book.routes")
+
+// user routes
 const bookRoutes = require("./api/v1/routes/book.routes")
-const cookieParser = require("cookie-parser")
-const { extractUser } = require("./middleware/auth.middleware")
+const categoryRoutes = require("./api/v1/routes/category.routes")
 
 const app = express()
 const port = process.env.PORT || 9999
@@ -95,6 +101,7 @@ app.use("/auth", authRoutes)
 
 // v1 routes
 v1Router.use("/books", bookRoutes)
+v1Router.use("/category", categoryRoutes)
 
 // admin routes
 adminRouter.use("/users", adminUserRoutes)

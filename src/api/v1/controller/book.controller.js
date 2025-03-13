@@ -5,60 +5,79 @@ const Book = require("../../../models/book.model")
 
 exports.getBooks = async (req, res) => {
 	try {
-		// get keyword, page, pageSize searchParams from req
-		const { keyword, page = 1, pageSize = 10 } = req.query
+		const {
+			keyword,
+			categories,
+			order = "desc",
+			sort = "createdAt",
+			page = 1,
+			limit = 10,
+		} = req.query
 
-		const filter = {}
+		// Build query
+		const query = {}
+
+		// Search by keyword in title, description, and author
 		if (keyword) {
-			filter.$or = [
+			query.$or = [
 				{ title: { $regex: keyword, $options: "i" } },
 				{ description: { $regex: keyword, $options: "i" } },
 				{ author: { $regex: keyword, $options: "i" } },
 			]
 		}
 
-		// Create both queries
-		const documentQuery = Book.find(filter)
-			.skip((page - 1) * pageSize)
-			.limit(pageSize)
+		// Filter by categories
+		if (categories) {
+			// Convert string to array if needed
+			const categoryIds = Array.isArray(categories)
+				? categories
+				: categories.split(",")
+			query.category = { $in: categoryIds }
+		}
 
-		const countQuery = Book.countDocuments(filter)
+		// Set up sorting and order
+		const sortOption = {}
+		sortOption[sort] = order === "desc" ? -1 : 1
 
-		// Execute both queries in parallel with Promise.all
-		const [books, totalCount] = await Promise.all([
-			documentQuery.exec(),
-			countQuery.exec(),
-		])
-		res.json({
-			books,
-			total: totalCount,
-			page: parseInt(page),
-			pageSize: parseInt(pageSize),
+		// Calculate pagination
+		const pageNum = parseInt(page)
+		const limitNum = parseInt(limit)
+		const skip = (pageNum - 1) * limitNum
+
+		// Execute query with pagination
+		const books = await Book.find(query)
+			.sort(sortOption)
+			.skip(skip)
+			.limit(limitNum)
+			.populate("category")
+
+		// Get total count for pagination
+		const totalBooks = await Book.countDocuments(query)
+
+		res.status(200).json({
+			data: books,
+			total: totalBooks,
+			page: pageNum,
+			limit: limitNum,
 		})
 	} catch (error) {
+		console.error(error)
 		res.status(500).json({ message: error.message })
 	}
 }
 
-exports.getBookById = async (req, res) => {
+exports.getBook = async (req, res) => {
 	try {
-		const bookId = req.params.id
-		const book = await Book.findById(bookId)
+		const { id } = req.params
+		const book = await Book.findById(id).populate("category")
+
 		if (!book) {
 			return res.status(404).json({ message: "Book not found" })
 		}
-		res.json(book)
-	} catch (error) {
-		res.status(500).json({ message: error.message })
-	}
-}
 
-exports.createBook = async (req, res) => {
-	try {
-		const newBook = new Book(req.body)
-		await newBook.save()
-		res.status(201).json(newBook)
+		res.status(200).json(book)
 	} catch (error) {
-		res.status(400).json({ message: error.message })
+		console.error(error)
+		res.status(500).json({ message: error.message })
 	}
 }
