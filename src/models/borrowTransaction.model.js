@@ -26,8 +26,8 @@ const borrowTransactionSchema = new mongoose.Schema(
 		},
 		status: {
 			type: String,
-			enum: BorrowStatus,
-			default: BorrowStatus[0],
+			enum: Object.values(BorrowStatus),
+			default: BorrowStatus.CHECKING,
 		},
 	},
 	{

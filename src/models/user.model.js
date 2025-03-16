@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema(
 		},
 		role: {
 			type: String,
-			enum: Object.entries(UserRole).map(([, value]) => value),
-			default: "user",
+			enum: Object.values(UserRole),
+			default: UserRole.USER,
 		},
 		avatar: {
 			type: String,

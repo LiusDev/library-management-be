@@ -20,6 +20,7 @@ const adminBookRoutes = require("./api/admin/routes/book.routes")
 // user routes
 const bookRoutes = require("./api/v1/routes/book.routes")
 const categoryRoutes = require("./api/v1/routes/category.routes")
+const borrowTransactionRoutes = require("./api/v1/routes/borrowTransaction.routes")
 
 const app = express()
 const port = process.env.PORT || 9999
@@ -105,6 +106,7 @@ app.use("/auth", authRoutes)
 // v1 routes
 v1Router.use("/books", bookRoutes)
 v1Router.use("/category", categoryRoutes)
+v1Router.use("/borrow", borrowTransactionRoutes)
 
 // admin routes
 adminRouter.use("/users", adminUserRoutes)

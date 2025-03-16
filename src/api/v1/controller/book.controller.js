@@ -2,6 +2,9 @@
  * @type {import("../../../models/book.model")}
  */
 const Book = require("../../../models/book.model")
+/**
+ * @type {import("../../../models/borrowTransaction.model")}
+ */
 const BorrowTransaction = require("../../../models/borrowTransaction.model")
 const { BorrowStatus } = require("../../../utils/constant")
 
@@ -128,7 +131,7 @@ exports.borrowBook = async (req, res) => {
 			book: bookId,
 			borrowDate: borrowDate,
 			dueDate: dueDate,
-			status: BorrowStatus[0], // Borrowed status
+			status: BorrowStatus.CHECKING, // Borrowed status
 		})
 
 		// Update book availability
