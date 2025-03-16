@@ -2,15 +2,64 @@
  * @type {import("../../../models/book.model")}
  */
 const Book = require("../../../models/book.model")
+const cloudinary = require("../../../config/cloudinary")
+const fs = require("fs")
 
 exports.createBook = async (req, res) => {
 	try {
-		// Validate if categories are provided as array
-		if (req.body.category && !Array.isArray(req.body.category)) {
-			req.body.category = [req.body.category] // Convert to array if single value
+		// Create book data from form fields
+		const bookData = {
+			title: req.body.title,
+			description: req.body.description,
+			author: req.body.author,
+			publishedDate: req.body.publishedDate,
+			quantity: req.body.quantity,
 		}
 
-		const book = new Book(req.body)
+		// Handle category data - could be a string, array, or JSON string
+		if (req.body.category) {
+			let categoryData = req.body.category
+
+			// If it's a JSON string (from form data), parse it
+			if (
+				typeof categoryData === "string" &&
+				(categoryData.startsWith("[") || categoryData.startsWith("{"))
+			) {
+				try {
+					categoryData = JSON.parse(categoryData)
+				} catch (e) {
+					console.error("Error parsing category JSON:", e)
+				}
+			}
+
+			// Ensure category is an array
+			bookData.category = Array.isArray(categoryData)
+				? categoryData
+				: [categoryData]
+		}
+
+		// Handle file upload to Cloudinary if present
+		if (req.file) {
+			try {
+				const result = await cloudinary.uploader.upload(req.file.path, {
+					folder: "library",
+					use_filename: true,
+				})
+
+				// Set the cover URL from Cloudinary
+				bookData.cover = result.secure_url
+
+				// Clean up temp file
+				fs.unlinkSync(req.file.path)
+			} catch (uploadError) {
+				console.error("Cloudinary upload error:", uploadError)
+				return res
+					.status(400)
+					.json({ message: "Error uploading image" })
+			}
+		}
+
+		const book = new Book(bookData)
 		const newBook = await book.save()
 
 		// Populate category information before returning
@@ -108,13 +157,65 @@ exports.updateBook = async (req, res) => {
 	try {
 		const { id } = req.params
 
-		// Validate if categories are provided as array
-		if (req.body.category && !Array.isArray(req.body.category)) {
-			req.body.category = [req.body.category] // Convert to array if single value
+		// Create update data from form fields
+		const updateData = {
+			title: req.body.title,
+			description: req.body.description,
+			author: req.body.author,
+			publishedDate: req.body.publishedDate,
+			quantity: req.body.quantity,
+		}
+
+		// Only include defined fields
+		Object.keys(updateData).forEach(
+			(key) => updateData[key] === undefined && delete updateData[key]
+		)
+
+		// Handle category data
+		if (req.body.category) {
+			let categoryData = req.body.category
+
+			// If it's a JSON string (from form data), parse it
+			if (
+				typeof categoryData === "string" &&
+				(categoryData.startsWith("[") || categoryData.startsWith("{"))
+			) {
+				try {
+					categoryData = JSON.parse(categoryData)
+				} catch (e) {
+					console.error("Error parsing category JSON:", e)
+				}
+			}
+
+			// Ensure category is an array
+			updateData.category = Array.isArray(categoryData)
+				? categoryData
+				: [categoryData]
+		}
+
+		// Handle file upload to Cloudinary if present
+		if (req.file) {
+			try {
+				const result = await cloudinary.uploader.upload(req.file.path, {
+					folder: "library",
+					use_filename: true,
+				})
+
+				// Set the cover URL from Cloudinary
+				updateData.cover = result.secure_url
+
+				// Clean up temp file
+				fs.unlinkSync(req.file.path)
+			} catch (uploadError) {
+				console.error("Cloudinary upload error:", uploadError)
+				return res
+					.status(400)
+					.json({ message: "Error uploading image" })
+			}
 		}
 
 		// Find and update with validation and return updated document
-		const updatedBook = await Book.findByIdAndUpdate(id, req.body, {
+		const updatedBook = await Book.findByIdAndUpdate(id, updateData, {
 			new: true, // Return updated doc
 			runValidators: true, // Validate before update
 		}).populate("category")

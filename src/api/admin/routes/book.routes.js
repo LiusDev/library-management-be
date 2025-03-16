@@ -3,10 +3,12 @@ const router = express.Router()
 const bookController = require("../controller/book.controller")
 const authorization = require("../../../middleware/authorization")
 const { UserRole } = require("../../../utils/constant")
+const upload = require("../../../middleware/upload.middleware")
 
 router.post(
 	"/",
 	authorization([UserRole.ADMIN, UserRole.STAFF]),
+	upload.single("cover"),
 	bookController.createBook
 )
 
@@ -22,9 +24,10 @@ router.get(
 	bookController.getBook
 )
 
-router.put(
+router.post(
 	"/:id",
 	authorization([UserRole.ADMIN, UserRole.STAFF]),
+	upload.single("cover"),
 	bookController.updateBook
 )
 

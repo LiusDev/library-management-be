@@ -4,4 +4,10 @@ const UserRole = {
 	USER: "user",
 }
 
-module.exports = { UserRole }
+const BorrowStatus = {
+	BORROWED: "borrowed",
+	RETURNED: "returned",
+	LATE: "late",
+}
+
+module.exports = { UserRole, BorrowStatus }

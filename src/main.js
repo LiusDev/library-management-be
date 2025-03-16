@@ -6,8 +6,11 @@ const connectDB = require("./config/database")
 const passport = require("./config/passport")
 const cookieParser = require("cookie-parser")
 const { extractUser } = require("./middleware/auth.middleware")
+const { createUploadsDir } = require("./config/init")
 
-// common routes
+// Create necessary directories
+createUploadsDir()
+
 const authRoutes = require("./api/common/routes/auth.routes")
 // admin routes
 const adminUserRoutes = require("./api/admin/routes/user.routes")
