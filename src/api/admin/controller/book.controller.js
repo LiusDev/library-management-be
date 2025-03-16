@@ -14,6 +14,7 @@ exports.createBook = async (req, res) => {
 			author: req.body.author,
 			publishedDate: req.body.publishedDate,
 			quantity: req.body.quantity,
+			available: req.body.available,
 		}
 
 		// Handle category data - could be a string, array, or JSON string
@@ -164,6 +165,7 @@ exports.updateBook = async (req, res) => {
 			author: req.body.author,
 			publishedDate: req.body.publishedDate,
 			quantity: req.body.quantity,
+			available: req.body.available,
 		}
 
 		// Only include defined fields
