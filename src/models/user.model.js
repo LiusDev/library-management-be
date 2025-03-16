@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema(
 			unique: true,
 			trim: true,
 		},
+		phone: {
+			type: String,
+			trim: true,
+			unique: true,
+		},
 		role: {
 			type: String,
 			enum: Object.entries(UserRole).map(([, value]) => value),

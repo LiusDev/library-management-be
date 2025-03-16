@@ -23,6 +23,8 @@ router.get(
 
 router.get("/profile", authController.getProfile)
 
+router.post("/phone", authController.addPhone)
+
 router.get("/logout", authController.logout)
 
 module.exports = router

@@ -2,6 +2,8 @@
  * @type {import("../../../models/book.model")}
  */
 const Book = require("../../../models/book.model")
+const BorrowTransaction = require("../../../models/borrowTransaction.model")
+const { BorrowStatus } = require("../../../utils/constant")
 
 exports.getBooks = async (req, res) => {
 	try {
@@ -76,6 +78,74 @@ exports.getBook = async (req, res) => {
 		}
 
 		res.status(200).json(book)
+	} catch (error) {
+		console.error(error)
+		res.status(500).json({ message: error.message })
+	}
+}
+
+exports.borrowBook = async (req, res) => {
+	try {
+		// Check if user is authenticated
+		if (!req.user) {
+			return res.status(401).json({ message: "Authentication required" })
+		}
+
+		const { bookId, time } = req.body
+		const userId = req.user._id
+
+		// Validate bookId
+		if (!bookId) {
+			return res.status(400).json({ message: "Book ID is required" })
+		}
+
+		// Find the book
+		const book = await Book.findById(bookId)
+		if (!book) {
+			return res.status(404).json({ message: "Book not found" })
+		}
+
+		// Check time is number and positive from 1 to 4 (weeks)
+		if (!time || isNaN(time) || time < 1 || time > 4) {
+			return res.status(400).json({ message: "Invalid borrowing time" })
+		}
+
+		// Check if book is available
+		if (book.available <= 0) {
+			return res
+				.status(400)
+				.json({ message: "Book is not available for borrowing" })
+		}
+
+		// Calculate due date (14 days from now by default)
+		const borrowDate = new Date()
+		const dueDate = new Date()
+		dueDate.setDate(dueDate.getDate() + time * 7)
+
+		// Create new borrow transaction
+		const borrowTransaction = new BorrowTransaction({
+			user: userId,
+			book: bookId,
+			borrowDate: borrowDate,
+			dueDate: dueDate,
+			status: BorrowStatus[0], // Borrowed status
+		})
+
+		// Update book availability
+		book.available -= 1
+
+		// Save both documents in a transaction
+		await Promise.all([borrowTransaction.save(), book.save()])
+
+		res.status(201).json({
+			message: "Book borrowed successfully",
+			transaction: {
+				id: borrowTransaction._id,
+				borrowDate: borrowTransaction.borrowDate,
+				dueDate: borrowTransaction.dueDate,
+				status: borrowTransaction.status,
+			},
+		})
 	} catch (error) {
 		console.error(error)
 		res.status(500).json({ message: error.message })

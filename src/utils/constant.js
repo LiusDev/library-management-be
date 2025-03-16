@@ -5,9 +5,9 @@ const UserRole = {
 }
 
 const BorrowStatus = {
+	CHECKING: "checking",
 	BORROWED: "borrowed",
 	RETURNED: "returned",
-	LATE: "late",
 }
 
 module.exports = { UserRole, BorrowStatus }

@@ -73,3 +73,20 @@ exports.logout = (req, res) => {
 	})
 	res.json({ message: "Logged out successfully" })
 }
+
+exports.addPhone = async (req, res) => {
+	try {
+		const { phone } = req.body
+		if (!phone) {
+			return res.status(400).json({ message: "Phone number is required" })
+		}
+
+		req.user.phone = phone
+		await req.user.save()
+
+		res.json({ message: "Phone number added successfully" })
+	} catch (error) {
+		console.error("Error in addPhone:", error)
+		res.status(500).json({ message: "Internal server error" })
+	}
+}
