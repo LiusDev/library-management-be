@@ -1,16 +1,11 @@
 const express = require("express")
 const router = express.Router()
 const userController = require("../controller/user.controller")
-const validate = require("../../../middleware/validate")
-const {
-	createUserSchema,
-	updateUserSchema,
-} = require("../validations/user.validation")
+const authorization = require("../../../middleware/authorization")
+const { UserRole } = require("../../../utils/constant")
 
-router.get("/", userController.getUsers)
-router.get("/:id", userController.getUserById)
-router.post("/", validate(createUserSchema), userController.createUser)
-router.put("/:id", validate(updateUserSchema), userController.updateUser)
-router.delete("/:id", userController.deleteUser)
+router.get("/", authorization([UserRole.ADMIN]), userController.getUsers)
+router.get("/:id", authorization([UserRole.ADMIN]), userController.getUserById)
+router.put("/:id", authorization([UserRole.ADMIN]), userController.updateUser)
 
 module.exports = router

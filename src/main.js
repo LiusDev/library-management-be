@@ -16,6 +16,7 @@ const authRoutes = require("./api/common/routes/auth.routes")
 const adminUserRoutes = require("./api/admin/routes/user.routes")
 const adminCategoryRoutes = require("./api/admin/routes/category.routes")
 const adminBookRoutes = require("./api/admin/routes/book.routes")
+const adminBorrowTransactionRoutes = require("./api/admin/routes/borrowTransaction.routes")
 
 // user routes
 const bookRoutes = require("./api/v1/routes/book.routes")
@@ -112,6 +113,7 @@ v1Router.use("/borrow", borrowTransactionRoutes)
 adminRouter.use("/users", adminUserRoutes)
 adminRouter.use("/category", adminCategoryRoutes)
 adminRouter.use("/books", adminBookRoutes)
+adminRouter.use("/borrow", adminBorrowTransactionRoutes)
 
 app.use("/v1", v1Router)
 app.use("/admin", adminRouter)
