@@ -81,6 +81,13 @@ exports.addPhone = async (req, res) => {
 			return res.status(400).json({ message: "Phone number is required" })
 		}
 
+		const existingUser = await User.find({ phone })
+		if (existingUser) {
+			return res
+				.status(400)
+				.json({ message: "Phone number already exists" })
+		}
+
 		req.user.phone = phone
 		await req.user.save()
 
