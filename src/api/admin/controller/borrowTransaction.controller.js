@@ -138,6 +138,18 @@ exports.updateTransaction = async (req, res) => {
 		const updateData = {}
 
 		if (status) {
+			// Check if status is being changed to RETURNED and wasn't already returned
+			if (
+				status === BorrowStatus.RETURNED &&
+				transaction.status !== BorrowStatus.RETURNED
+			) {
+				// Increment the book's available count
+				const book = await Book.findById(transaction.book)
+				if (book) {
+					book.available += 1
+					await book.save()
+				}
+			}
 			updateData.status = status
 		}
 
