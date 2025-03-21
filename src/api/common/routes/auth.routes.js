@@ -21,6 +21,24 @@ router.get(
 	authController.googleCallback
 )
 
+// Mobile specific routes
+router.get(
+	"/google/mobile",
+	passport.authenticate("google-mobile", {
+		scope: ["profile", "email"],
+		session: false,
+	})
+)
+
+router.get(
+	"/google/mobile/callback",
+	passport.authenticate("google-mobile", {
+		failureRedirect: `${config.frontend.url}/login?error=true`,
+		session: false,
+	}),
+	authController.googleCallbackMobile
+)
+
 router.get("/profile", authController.getProfile)
 
 router.post("/phone", authController.addPhone)

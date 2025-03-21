@@ -7,9 +7,8 @@ const config = {
 	google: {
 		clientID: process.env.GOOGLE_CLIENT_ID,
 		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-		callbackURL: `${
-			process.env.BASE_URL || "http://localhost:9999"
-		}/auth/google/callback`,
+		callbackURL: process.env.GOOGLE_CALLBACK_URL,
+		mobileCallbackURL: process.env.GOOGLE_MOBILE_CALLBACK_URL,
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET || "your-jwt-secret",

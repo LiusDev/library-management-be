@@ -53,6 +53,44 @@ exports.googleCallback = async (req, res) => {
 	}
 }
 
+exports.googleCallbackMobile = async (req, res) => {
+	if (!req.user) {
+		return res.status(401).json({ message: "Authentication failed" })
+	}
+	try {
+		let user = await User.findOne({ email: req.user.email })
+		if (!user) {
+			const newUser = new User({
+				username: req.user.username || req.user.email,
+				email: req.user.email,
+				firstName: req.user.givenName,
+				lastName: req.user.familyName,
+				avatar: req.user.avatar,
+				role:
+					req.user.email === process.env.ADMIN_EMAIL
+						? "admin"
+						: "user",
+			})
+
+			user = await newUser.save()
+		} else {
+			user.firstName = req.user.givenName || user.firstName
+			user.lastName = req.user.familyName || user.lastName
+			user.avatar = req.user.avatar || user.avatar
+			user.save()
+		}
+
+		const token = generateToken(user)
+		console.log(`Token of ${user.email}: ${token}`)
+		// callback for mobile, set token in response body and return instead of redirect
+
+		res.json({ token })
+	} catch (error) {
+		console.error("Error in Google Callback:", error)
+		res.status(500).json({ message: "Internal server error" })
+	}
+}
+
 exports.getProfile = async (req, res) => {
 	try {
 		if (!req.user) {
