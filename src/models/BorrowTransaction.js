@@ -7,8 +7,7 @@
  *       required:
  *         - user
  *         - book
- *         - fromDate
- *         - toDate
+ *         - dueDate
  *       properties:
  *         _id:
  *           type: string
@@ -32,33 +31,38 @@
  *               type: string
  *             author:
  *               type: string
- *             isbn:
+ *             description:
  *               type: string
+ *             cover:
+ *               type: string
+ *             category:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   name:
+ *                     type: string
  *           description: Book information
- *         fromDate:
+ *         borrowDate:
  *           type: string
- *           format: date
- *           description: Start date of borrowing period
- *         toDate:
+ *           format: date-time
+ *           description: Date when the borrowing starts
+ *           default: Current date and time
+ *         dueDate:
  *           type: string
- *           format: date
- *           description: End date of borrowing period
+ *           format: date-time
+ *           description: Date when the book is due to be returned
  *         returnDate:
  *           type: string
- *           format: date
+ *           format: date-time
  *           description: Actual date when the book was returned
  *         status:
  *           type: string
- *           enum: [pending, approved, rejected, returned, overdue]
+ *           enum: [checking, borrowed, returned]
  *           description: Status of the borrow transaction
- *         approvedBy:
- *           type: object
- *           properties:
- *             _id:
- *               type: string
- *             name:
- *               type: string
- *           description: Admin who approved the transaction
+ *           default: checking
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -68,24 +72,28 @@
  *           format: date-time
  *           description: The date the transaction was last updated
  *       example:
- *         _id: 60d21b4667d0d8992e610c95
+ *         _id: "60d21b4667d0d8992e610c95"
  *         user:
- *           _id: 60d21b4667d0d8992e610c75
- *           name: John Doe
- *           email: john.doe@example.com
+ *           _id: "60d21b4667d0d8992e610c75"
+ *           name: "John Doe"
+ *           email: "john.doe@example.com"
  *         book:
- *           _id: 60d21b4667d0d8992e610c85
- *           title: The Great Gatsby
- *           author: F. Scott Fitzgerald
- *           isbn: 978-3-16-148410-0
- *         fromDate: 2023-06-01
- *         toDate: 2023-06-15
- *         status: approved
- *         approvedBy:
- *           _id: 60d21b4667d0d8992e610c70
- *           name: Admin User
- *         createdAt: 2023-05-28T00:00:00.000Z
- *         updatedAt: 2023-05-29T00:00:00.000Z
+ *           _id: "60d21b4667d0d8992e610c85"
+ *           title: "The Great Gatsby"
+ *           author: "F. Scott Fitzgerald"
+ *           description: "A novel about the American Dream and its corruption in the 1920s."
+ *           cover: "great-gatsby.jpg"
+ *           category: [
+ *             {
+ *               _id: "60d21b4667d0d8992e610c90",
+ *               name: "Fiction"
+ *             }
+ *           ]
+ *         borrowDate: "2023-06-01T00:00:00.000Z"
+ *         dueDate: "2023-06-15T00:00:00.000Z"
+ *         status: "checking"
+ *         createdAt: "2023-05-28T00:00:00.000Z"
+ *         updatedAt: "2023-05-29T00:00:00.000Z"
  */
 
 // This file is only for Swagger documentation

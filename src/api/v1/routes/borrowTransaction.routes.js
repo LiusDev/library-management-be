@@ -24,18 +24,14 @@ const borrowTransactionController = require("../controller/borrowTransaction.con
  *         name: page
  *         schema:
  *           type: integer
+ *           default: 1
  *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
- *       - in: query
- *         name: status
- *         schema:
- *           type: string
- *           enum: [pending, approved, rejected, returned, overdue]
- *         description: Filter by transaction status
  *     responses:
  *       200:
  *         description: A list of borrow transactions
@@ -48,19 +44,34 @@ const borrowTransactionController = require("../controller/borrowTransaction.con
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/BorrowTransaction'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: integer
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
+ *                 total:
+ *                   type: integer
+ *                   description: Total number of transactions
+ *                 page:
+ *                   type: integer
+ *                   description: Current page number
+ *                 limit:
+ *                   type: integer
+ *                   description: Number of items per page
  *       401:
- *         description: Unauthorized
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Authentication required"
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get("/", authorization([]), borrowTransactionController.getTransactions)
 

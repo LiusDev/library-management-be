@@ -15,7 +15,7 @@ const authorization = require("../../../middleware/authorization")
  * /v1/category:
  *   get:
  *     summary: Get all categories
- *     description: Retrieve a list of all book categories
+ *     description: Retrieve a list of all book categories with book count
  *     tags: [Categories]
  *     security:
  *       - bearerAuth: []
@@ -24,15 +24,17 @@ const authorization = require("../../../middleware/authorization")
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number
+ *           default: 1
+ *         description: Page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
  *     responses:
  *       200:
- *         description: A list of categories
+ *         description: A list of categories with book count
  *         content:
  *           application/json:
  *             schema:
@@ -41,20 +43,27 @@ const authorization = require("../../../middleware/authorization")
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Category'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: integer
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
+ *                     $ref: '#/components/schemas/CategoryWithCount'
+ *                 total:
+ *                   type: integer
+ *                   description: Total number of categories
+ *                 page:
+ *                   type: integer
+ *                   description: Current page number
+ *                 limit:
+ *                   type: integer
+ *                   description: Number of items per page
  *       401:
  *         description: Unauthorized
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get("/", authorization([]), categoryController.getCategories)
 

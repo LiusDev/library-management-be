@@ -7,7 +7,7 @@
  *       required:
  *         - title
  *         - author
- *         - isbn
+ *         - category
  *       properties:
  *         _id:
  *           type: string
@@ -15,36 +15,38 @@
  *         title:
  *           type: string
  *           description: Book title
- *         author:
- *           type: string
- *           description: Book author
- *         isbn:
- *           type: string
- *           description: International Standard Book Number
  *         description:
  *           type: string
  *           description: Book description
- *         publishDate:
+ *         author:
  *           type: string
- *           format: date
+ *           description: Book author
+ *         publishedDate:
+ *           type: string
+ *           format: date-time
  *           description: Publication date
- *         category:
- *           type: object
- *           properties:
- *             _id:
- *               type: string
- *             name:
- *               type: string
- *           description: Category information
- *         coverImage:
- *           type: string
- *           description: URL to the book cover image
- *         availableCopies:
- *           type: integer
- *           description: Number of available copies
- *         totalCopies:
+ *         quantity:
  *           type: integer
  *           description: Total number of copies owned by the library
+ *           default: 0
+ *         available:
+ *           type: integer
+ *           description: Number of available copies
+ *           default: 0
+ *         cover:
+ *           type: string
+ *           description: URL to the book cover image
+ *           default: default.jpg
+ *         category:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *           description: Categories this book belongs to
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -57,17 +59,23 @@
  *         _id: 60d21b4667d0d8992e610c85
  *         title: The Great Gatsby
  *         author: F. Scott Fitzgerald
- *         isbn: 978-3-16-148410-0
  *         description: A novel about the American Dream and its corruption in the 1920s.
- *         publishDate: 1925-04-10
- *         category:
- *           _id: 60d21b4667d0d8992e610c90
- *           name: Fiction
- *         coverImage: https://example.com/covers/great-gatsby.jpg
- *         availableCopies: 5
- *         totalCopies: 10
+ *         publishedDate: 2023-01-01T00:00:00.000Z
+ *         quantity: 10
+ *         available: 8
+ *         cover: great-gatsby.jpg
+ *         category: [
+ *           {
+ *             _id: 60d21b4667d0d8992e610c90,
+ *             name: Fiction
+ *           },
+ *           {
+ *             _id: 60d21b4667d0d8992e610c91,
+ *             name: Classics
+ *           }
+ *         ]
  *         createdAt: 2023-01-01T00:00:00.000Z
- *         updatedAt: 2023-01-01T00:00:00.000Z
+ *         updatedAt: 2023-01-10T00:00:00.000Z
  */
 
 // This file is only for Swagger documentation

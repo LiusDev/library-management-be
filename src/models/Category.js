@@ -16,20 +16,26 @@
  *         description:
  *           type: string
  *           description: Category description
- *         createdAt:
- *           type: string
- *           format: date-time
- *           description: The date the category was created
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           description: The date the category was last updated
+ *           default: ""
  *       example:
  *         _id: 60d21b4667d0d8992e610c90
  *         name: Fiction
  *         description: Novels, short stories, and other fictional works
- *         createdAt: 2023-01-01T00:00:00.000Z
- *         updatedAt: 2023-01-01T00:00:00.000Z
+ *
+ *     CategoryWithCount:
+ *       allOf:
+ *         - $ref: '#/components/schemas/Category'
+ *         - type: object
+ *           properties:
+ *             bookCount:
+ *               type: integer
+ *               description: Number of books in this category
+ *               default: 0
+ *           example:
+ *             _id: 60d21b4667d0d8992e610c90
+ *             name: Fiction
+ *             description: Novels, short stories, and other fictional works
+ *             bookCount: 42
  */
 
 // This file is only for Swagger documentation

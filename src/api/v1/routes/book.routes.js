@@ -21,25 +21,40 @@ const bookController = require("../controller/book.controller")
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
+ *         name: keyword
+ *         schema:
+ *           type: string
+ *         description: Search term for book title, description, or author
+ *       - in: query
+ *         name: categories
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of category IDs to filter by
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *         description: Sort order (ascending or descending)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           default: createdAt
+ *         description: Field to sort by (e.g., createdAt, title)
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number
+ *           default: 1
+ *         description: Page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
+ *           default: 10
  *         description: Number of items per page
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Search term to filter books by title, author, or ISBN
- *       - in: query
- *         name: category
- *         schema:
- *           type: string
- *         description: Category ID to filter books
  *     responses:
  *       200:
  *         description: A list of books
@@ -52,15 +67,15 @@ const bookController = require("../controller/book.controller")
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Book'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: integer
- *                     page:
- *                       type: integer
- *                     limit:
- *                       type: integer
+ *                 total:
+ *                   type: integer
+ *                   description: Total number of books matching the query
+ *                 page:
+ *                   type: integer
+ *                   description: Current page number
+ *                 limit:
+ *                   type: integer
+ *                   description: Number of items per page
  *       401:
  *         description: Unauthorized
  *       500:
@@ -115,33 +130,73 @@ router.get("/:id", authorization([]), bookController.getBook)
  *             type: object
  *             required:
  *               - bookId
- *               - fromDate
- *               - toDate
+ *               - time
  *             properties:
  *               bookId:
  *                 type: string
  *                 description: ID of the book to borrow
- *               fromDate:
- *                 type: string
- *                 format: date
- *                 description: Start date of borrowing period
- *               toDate:
- *                 type: string
- *                 format: date
- *                 description: End date of borrowing period
+ *               time:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 4
+ *                 description: Number of weeks to borrow the book (1-4)
+ *           example:
+ *             bookId: "60d21b4667d0d8992e610c85"
+ *             time: 2
  *     responses:
  *       201:
  *         description: Borrow request created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/BorrowTransaction'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book borrowed successfully"
+ *                 transaction:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     borrowDate:
+ *                       type: string
+ *                       format: date-time
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                     status:
+ *                       type: string
  *       400:
  *         description: Invalid request data or book not available
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book is not available for borrowing"
  *       401:
- *         description: Unauthorized
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Authentication required"
  *       404:
  *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book not found"
  */
 router.post("/borrow", authorization([]), bookController.borrowBook)
 
