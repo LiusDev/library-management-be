@@ -7,6 +7,8 @@ const passport = require("./config/passport")
 const cookieParser = require("cookie-parser")
 const { extractUser } = require("./middleware/auth.middleware")
 const { createUploadsDir } = require("./config/init")
+const swaggerUi = require("swagger-ui-express")
+const swaggerSpec = require("./config/swagger")
 
 // Create necessary directories
 createUploadsDir()
@@ -93,6 +95,13 @@ app.use(extractUser)
 // Initialize passport before routes
 app.use(passport.initialize())
 
+// Swagger Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.get("/swagger.json", (req, res) => {
+	res.setHeader("Content-Type", "application/json")
+	res.send(swaggerSpec)
+})
+
 // Basic route
 app.get("/", (req, res) => {
 	res.json({ message: "Welcome to Library Management System API" })
@@ -135,6 +144,9 @@ app.use((err, req, res, next) => {
 connectDB().then(() => {
 	app.listen(port, host, () => {
 		console.log(`Server is running on http://${host}:${port}`)
+		console.log(
+			`Swagger documentation available at http://${host}:${port}/api-docs`
+		)
 	})
 })
 
