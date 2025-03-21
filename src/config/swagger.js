@@ -16,7 +16,7 @@ const options = {
 			{
 				url:
 					process.env.NODE_ENV === "production"
-						? "https://api.quydx.id.vn"
+						? "https://library-api.quydx.id.vn"
 						: `http://localhost:${process.env.PORT || 9999}`,
 				description:
 					process.env.NODE_ENV === "production"
